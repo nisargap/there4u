@@ -4,6 +4,7 @@ from tweepy import Stream
 import json
 import requests
 import keys
+from toneAnalyzer import analyze_tone
 
 #Variables that contains the user credentials to access Twitter API 
 
@@ -16,11 +17,26 @@ class StdOutListener(StreamListener):
         
         global count
         data = json.loads(data)
-        print(data["text"])
+        
+        tone = analyze_tone(data["text"])
+        id_str = data["id_str"]
+        name = data["user"]["name"]
+        screen_name = data["user"]["screen_name"]
 
+
+
+        if(tone):
+            tone_name = tone["tone_name"]
+            if(tone_name == "Sadness"):
+
+                print (id_str)
+                print("-----------------------------------")
+                print(tone['score'])
+                print(data["text"])
+                print("------------------------------------")
         count += 1
 
-        if count > 20:
+        if count > 40:
             return False
 
         # merge stuff
